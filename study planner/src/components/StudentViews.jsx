@@ -1,3 +1,4 @@
+import { useStudyPlanner } from "../state/StudyPlannerContext.jsx";
 import { useEffect, useRef, useState } from "react";
 import {
   CalendarDays,
@@ -55,7 +56,11 @@ export function NextClassCard({ data, onRoutine }) {
   );
 }
 
-export function RoutineView({ data, onEdit, onDelete, onAdd }) {
+export function RoutineView({ onEdit, onAdd }) {
+  const { data, deleteRoutine } = useStudyPlanner();
+  function onDelete(item) {
+    if (window.confirm("Delete this weekly class?")) deleteRoutine(item.id);
+  }
   const [day, setDay] = useState(() => new Date().getDay());
   const classes = data.routine
     .filter((c) => c.day === day)
@@ -177,7 +182,9 @@ export function RoutineView({ data, onEdit, onDelete, onAdd }) {
   );
 }
 
-export function TasksView({ data, planner, onEdit, onAdd }) {
+export function TasksView({ onEdit, onAdd }) {
+  const planner = useStudyPlanner();
+  const { data } = planner;
   const [filter, setFilter] = useState("open");
   const today = localDate();
   const tasks = data.tasks
@@ -274,8 +281,10 @@ export function TasksView({ data, planner, onEdit, onAdd }) {
           <div className="empty-state">
             <Check size={32} />
             <h3>
-              {filter === "done"
-                ? "Your completed tasks will appear here"
+              {!data.tasks.length ? "Room for your own goals"
+                : filter === "done" ? "No completed tasks yet"
+                : filter === "today" ? "Nothing due today"
+                : filter === "open" ? "You’re all caught up"
                 : "Room for your own goals"}
             </h3>
             <p>
@@ -292,7 +301,9 @@ export function TasksView({ data, planner, onEdit, onAdd }) {
   );
 }
 
-export function NotesView({ data, planner, onTaskCreated, newNoteId }) {
+export function NotesView({ onTaskCreated, newNoteId }) {
+  const planner = useStudyPlanner();
+  const { data } = planner;
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(data.notes[0]?.id || null);
   useEffect(() => {
@@ -377,7 +388,8 @@ export function NotesView({ data, planner, onTaskCreated, newNoteId }) {
           ))}
           {!notes.length && (
             <p className="notes-no-results">
-              {query ? "No matching notes." : "Your notes will appear here."}
+              {query ? "No matching notes. Try a different search." : "Your notes will appear here."}
+              {query && <button className="text-button" onClick={() => setQuery("")}>Clear search</button>}
             </p>
           )}
         </div>

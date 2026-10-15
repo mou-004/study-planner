@@ -1,3 +1,28 @@
+## Shared state update
+
+This version uses React Context API, which is part of React and does not require a backend API or another dependency.
+
+- `StudyPlannerProvider` owns the reducer, browser persistence, save errors, and restore actions once per active profile.
+- Tasks, Notes, and Routine consume `useStudyPlanner()` directly instead of receiving planner data/actions through props. Local search, filters, and editor visibility stay local.
+- Profile changes remount the provider using the profile ID; existing storage keys and saved data remain compatible.
+- A responsive, accessible skeleton appears while opening a profile. Backup import shows a busy spinner and resets on success, cancellation, or failure. Reduced-motion preferences are respected.
+- Empty courses, assignments, routine days, task filters, and notes have guidance; unsuccessful note searches can be cleared.
+- There are no remote fetch calls in this offline app. If a backend is added later, its requests must expose loading, error, and empty states too. Browser storage does not sync between devices.
+
+### Verify manually
+
+1. Open the app, then switch profiles: a loading shell precedes each workspace.
+2. Create and complete a task; check its counts and filters, then reload.
+3. Create a note and turn it into a review task; open Tasks to see the shared update.
+4. Add and delete a routine class; check the next-class overview.
+5. Use an empty profile to check course, assignment, routine, task, and note empty states.
+6. Import a valid backup, cancel a restore, and try an invalid file. The busy state must always clear.
+7. Switch profiles and confirm their data stays isolated.
+
+Run `npm ci`, `npm test`, and `npm run build`. Run `npm run dev` for development.
+
+---
+
 # Studyspace — Blueprint Motion Edition 4.1
 
 A professional React workspace for any student: separate local profiles, university routines, personal tasks, searchable notes, courses, assignments, and progress. Local state comes first: React `useReducer` owns the data behind a single `useStudyPlanner` hook, ready for a future Zustand refactor.

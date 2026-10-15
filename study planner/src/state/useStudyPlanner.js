@@ -2,8 +2,8 @@ import { useEffect, useReducer, useState } from "react";
 import { loadPlanner, plannerReducer, isValidData } from "./model.js";
 import { profileStorageKey } from "./profiles.js";
 import { emptyStudentData } from "./studentModel.js";
-// The only owner of application data. Replace this hook with a Zustand adapter later.
-export function useStudyPlanner(profileId = "default") {
+// Private state owner: called once per profile by StudyPlannerProvider.
+export function usePlannerStore(profileId = "default") {
   const storageKey = profileStorageKey(profileId);
   const fresh = () => ({
     version: 1,
@@ -46,7 +46,7 @@ export function useStudyPlanner(profileId = "default") {
         "Your browser could not save these changes. Your planner is still available in this tab. Free up browser storage or allow site storage, then retry.",
       );
     }
-  }, [data, savingEnabled]);
+  }, [data, savingEnabled, storageKey]);
   function retrySaving() {
     try {
       window.localStorage.setItem(storageKey, JSON.stringify(data));

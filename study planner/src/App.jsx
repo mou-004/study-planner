@@ -26,7 +26,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useStudyPlanner } from "./state/useStudyPlanner.js";
+import { StudyPlannerProvider, useStudyPlanner } from "./state/StudyPlannerContext.jsx";
 import {
   localDate,
   newId,
@@ -68,12 +68,12 @@ function dueLabel(value, today) {
 
 export default function App() {
   const manager = useProfiles();
-  return <PlannerApp key={manager.active} manager={manager} />;
+  return <StudyPlannerProvider key={manager.active} profileId={manager.active}><PlannerApp manager={manager} /></StudyPlannerProvider>;
 }
 function PlannerApp({ manager }) {
   const profileId = manager.active;
   const profile = manager.profiles.find((p) => p.id === profileId);
-  const planner = useStudyPlanner(profileId);
+  const planner = useStudyPlanner();
   const { data } = planner;
   const backupInput = useRef(null);
   const [newNoteId, setNewNoteId] = useState(null);
@@ -82,6 +82,7 @@ function PlannerApp({ manager }) {
   const [editor, setEditor] = useState(null);
   const [today, setToday] = useState(localDate);
   const [notice, setNotice] = useState("");
+  const [importing, setImporting] = useState(false);
   useEffect(() => {
     const timer = setInterval(() => setToday(localDate()), 30000);
     return () => clearInterval(timer);
@@ -187,7 +188,8 @@ function PlannerApp({ manager }) {
   async function importBackup(event) {
     const file = event.target.files?.[0];
     event.target.value = "";
-    if (!file) return;
+    if (!file || importing) return;
+    setImporting(true);
     try {
       if (file.size > 2_000_000)
         throw new Error("Choose a planner backup smaller than 2 MB.");
@@ -204,6 +206,8 @@ function PlannerApp({ manager }) {
       setNotice("Backup restored. Your planner is ready.");
     } catch (error) {
       setNotice(error.message || "The backup could not be opened.");
+    } finally {
+      setImporting(false);
     }
   }
   const courseCards = (
@@ -546,10 +550,12 @@ function PlannerApp({ manager }) {
               </button>
               <button
                 className="button secondary"
+                disabled={importing}
+                aria-busy={importing}
                 onClick={() => backupInput.current.click()}
               >
-                <Upload size={15} />
-                Restore
+                {importing ? <span className="loading-spinner" aria-hidden="true" /> : <Upload size={15} />}
+                {importing ? "Reading backup…" : "Restore"}
               </button>
               <input
                 ref={backupInput}
@@ -615,27 +621,18 @@ function PlannerApp({ manager }) {
           )}
           {view === "routine" && (
             <RoutineView
-              data={data}
               onEdit={(item) => setEditor({ kind: "routine", item })}
               onAdd={addClass}
-              onDelete={(item) => {
-                if (window.confirm("Delete this weekly class?"))
-                  planner.deleteRoutine(item.id);
-              }}
             />
           )}
           {view === "tasks" && (
             <TasksView
-              data={data}
-              planner={planner}
               onEdit={(item) => setEditor({ kind: "task", item })}
               onAdd={() => setEditor({ kind: "task" })}
             />
           )}
           {view === "notes" && (
             <NotesView
-              data={data}
-              planner={planner}
               newNoteId={newNoteId}
               onTaskCreated={() =>
                 setNotice("Review task added to Personal tasks for today.")
@@ -739,6 +736,13 @@ function PlannerApp({ manager }) {
                   </button>
                 )}
               </div>
+              {!data.courses.length && (
+                <div className="empty-state">
+                  <BookOpen size={36} />
+                  <h3>Your first course starts here</h3>
+                  <p>Add a course to organize assignments and build your weekly routine.</p>
+                </div>
+              )}
               {courseCards}
             </section>
           )}
