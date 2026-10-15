@@ -1,0 +1,219 @@
+/* Blueprint Motion 4.1 — animations are optional and require no extra package. */
+@keyframes study-page-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes study-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes study-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes study-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 14px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+@keyframes study-check-in {
+  0% {
+    transform: scale(0.7);
+  }
+  65% {
+    transform: scale(1.13);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-content {
+    animation: study-page-in 240ms ease-out;
+  }
+  .dashboard-welcome,
+  .page-heading,
+  .campus-banner,
+  .week-panel,
+  .next-panel,
+  .notes-workspace,
+  .student-section,
+  .momentum {
+    animation: study-card-in 420ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
+  }
+  .dashboard-welcome {
+    animation-duration: 500ms;
+  }
+  .page-heading {
+    animation-delay: 35ms;
+  }
+  .campus-banner {
+    animation-delay: 80ms;
+  }
+  .momentum {
+    animation-delay: 150ms;
+  }
+  .week-panel {
+    animation-delay: 180ms;
+  }
+  .next-panel {
+    animation-delay: 220ms;
+  }
+  .quick-actions > button,
+  .stat-card,
+  .course-card,
+  .add-course-card {
+    animation: study-card-in 420ms cubic-bezier(0.2, 0.7, 0.25, 1) backwards;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease;
+  }
+  .quick-actions > button:nth-child(1),
+  .stat-card:nth-child(1),
+  .course-card:nth-child(1) {
+    animation-delay: 60ms;
+  }
+  .quick-actions > button:nth-child(2),
+  .stat-card:nth-child(2),
+  .course-card:nth-child(2) {
+    animation-delay: 110ms;
+  }
+  .quick-actions > button:nth-child(3),
+  .stat-card:nth-child(3),
+  .course-card:nth-child(3) {
+    animation-delay: 160ms;
+  }
+  .quick-actions > button:nth-child(4),
+  .stat-card:nth-child(4),
+  .course-card:nth-child(4) {
+    animation-delay: 210ms;
+  }
+  .add-course-card {
+    animation-delay: 240ms;
+  }
+  .routine-card,
+  .personal-task {
+    animation: study-card-in 280ms ease-out backwards;
+  }
+  .routine-card:nth-child(2),
+  .personal-task:nth-child(2) {
+    animation-delay: 45ms;
+  }
+  .routine-card:nth-child(3),
+  .personal-task:nth-child(3) {
+    animation-delay: 90ms;
+  }
+  .button,
+  .icon-button,
+  .nav-link,
+  .week-day,
+  .day-tabs > button,
+  .notes-list > button,
+  .assignment-tabs > button {
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+  .button:active,
+  .quick-actions > button:active {
+    transform: translateY(1px) scale(0.985);
+  }
+  .icon-button:active,
+  .check-button:active {
+    transform: scale(0.93);
+  }
+  .nav-link svg,
+  .quick-icon svg {
+    transition: transform 180ms ease;
+  }
+  .progress-track > span {
+    transition: width 550ms cubic-bezier(0.2, 0.7, 0.25, 1);
+  }
+  .check-button {
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      transform 160ms ease;
+  }
+  .check-button.checked svg {
+    animation: study-check-in 240ms ease-out;
+  }
+  .status-select,
+  .assignment-row {
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+  dialog[open].editor {
+    animation: study-dialog-in 220ms cubic-bezier(0.2, 0.7, 0.25, 1);
+  }
+  dialog[open].editor::backdrop {
+    animation: study-page-in 180ms ease-out;
+  }
+  .toast {
+    animation: study-toast-in 260ms cubic-bezier(0.2, 0.7, 0.25, 1);
+  }
+  .notes-list > button.selected {
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .quick-actions > button:hover,
+  .course-card:hover,
+  .add-course-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px #29567c0c;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 22px #29567c0b;
+  }
+  .nav-link:hover svg,
+  .quick-actions > button:hover .quick-icon svg {
+    transform: translateY(-1px);
+  }
+  .week-day:hover,
+  .day-tabs > button:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
